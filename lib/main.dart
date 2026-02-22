@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:jbre_app/config/config.dart';
 
-void main() {
+void main() async {
+  await Environment.initEnvironment();
   runApp(ProviderScope(child: MyApp()));
 }
 
