@@ -4,7 +4,7 @@ import 'package:jbre_app/features/auth/infrastructure/infraestructure.dart';
 class AuthRepositoryImpl extends AuthRepository {
   final AuthDataSource dataSource;
 
-  AuthRepositoryImpl(AuthDataSource? dataSource)
+  AuthRepositoryImpl({AuthDataSource? dataSource})
     : dataSource = dataSource ?? AuthDataSourceImpl();
 
   @override
