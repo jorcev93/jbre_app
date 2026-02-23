@@ -178,10 +178,20 @@ class DioHttpAdapter implements HttpAdapter {
           statusCode: null,
         );
       case DioExceptionType.badResponse:
+        final dioResponse = e.response;
         return HttpAdapterException(
-          message: e.response?.statusMessage ?? 'Error en la respuesta',
-          statusCode: e.response?.statusCode,
-          data: e.response?.data,
+          message: dioResponse?.statusMessage ?? 'Error en la respuesta',
+          statusCode: dioResponse?.statusCode,
+          data: dioResponse?.data,
+          response: dioResponse != null
+              ? HttpResponse(
+                  data: dioResponse.data,
+                  statusCode: dioResponse.statusCode ?? 0,
+                  headers: dioResponse.headers.map.map(
+                    (key, value) => MapEntry(key, value.join(', ')),
+                  ),
+                )
+              : null,
         );
       case DioExceptionType.cancel:
         return HttpAdapterException(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jbre_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:jbre_app/features/auth/presentation/providers/login_form_provider.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -27,11 +28,21 @@ class LoginScreen extends StatelessWidget {
 class _LoginForm extends ConsumerWidget {
   const _LoginForm();
 
+  void showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loginForm = ref.watch(loginFormProvider);
     final size = MediaQuery.of(context).size;
-
+    
+    ref.listen(authProvider, (previous, next) {
+      if (next.errorMessage.isEmpty) return;
+      showSnackbar(context, next.errorMessage);
+    });
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 36),
       child: Column(
