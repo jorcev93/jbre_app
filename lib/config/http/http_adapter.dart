@@ -16,15 +16,18 @@ class HttpAdapterException implements Exception {
   final String message;
   final int? statusCode;
   final dynamic data;
+  final HttpResponse? response;
 
   HttpAdapterException({
     required this.message,
     this.statusCode,
     this.data,
+    this.response,
   });
 
   @override
-  String toString() => 'HttpAdapterException: $message (statusCode: $statusCode)';
+  String toString() =>
+      'HttpAdapterException: $message (statusCode: $statusCode)';
 }
 
 /// Interfaz abstracta para el adaptador HTTP.
