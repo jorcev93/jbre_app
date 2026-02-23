@@ -1,6 +1,7 @@
 //! 1 - Creamos el estado - State de este provider (NotifierProvider)
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
+import 'package:jbre_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:jbre_app/features/shared/shared.dart';
 
 class LoginFormState {
@@ -49,8 +50,11 @@ LoginFormState:
 
 //! 2 - Como implementamos el notifier
 class LoginFormNotifier extends Notifier<LoginFormState> {
+  late final Function(String, String) loginUserCallback;
+
   @override
   LoginFormState build() {
+    loginUserCallback = ref.watch(authProvider.notifier).loginUser;
     //! Inicializamos el estado con el estado inicial
     return const LoginFormState();
   }
@@ -73,10 +77,10 @@ class LoginFormNotifier extends Notifier<LoginFormState> {
     );
   }
 
-  void onFormSubmitted() {
+  Future<void> onFormSubmitted() async {  
     _touchEveryField();
     if (!state.isValid) return;
-    print(state);
+    await loginUserCallback(state.email.value, state.password.value);
   }
 
   void _touchEveryField() {
