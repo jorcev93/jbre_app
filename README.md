@@ -6,4 +6,5 @@ A new Flutter project.
 
 ## Dependens importans
 - Flutter_riverpod
-_ flutter_dotenv
+- flutter_dotenv
+- dio
