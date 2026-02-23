@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jbre_app/config/config.dart';
 import 'package:jbre_app/features/auth/domain/domain.dart';
 import 'package:jbre_app/features/auth/infrastructure/infraestructure.dart';
-import 'package:jbre_app/features/auth/infrastructure/repositories/auth_repository_impl.dart';
 
 //! Provider para el repositorio de autenticación
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -26,10 +26,13 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       final user = await authRepository.login(email, password);
       _setLoggedUser(user);
-    } on WrongCredentials{
+    } on WrongCredentials {
       logout('Credenciales incorrectas');
     } on Exception catch (e) {
-      logout('Error no controlado');
+      if (e is HttpAdapterException) {
+        print('Status: ${e.statusCode}, Data: ${e.data}');
+      }
+      logout('Error no controlado: ${e.runtimeType} - $e');
     }
   }
 

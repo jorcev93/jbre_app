@@ -1,5 +1,6 @@
 import 'package:jbre_app/config/config.dart';
 import 'package:jbre_app/features/auth/domain/domain.dart';
+import 'package:jbre_app/features/auth/infrastructure/errors/auth_errors.dart';
 import 'package:jbre_app/features/auth/infrastructure/mappers/user_mapper.dart';
 
 class AuthDataSourceImpl extends AuthDataSource {
@@ -21,10 +22,18 @@ class AuthDataSourceImpl extends AuthDataSource {
         '/auth/login',
         data: {'email': email, 'password': password},
       );
+      print(
+        '\x1B[32m🟢 Response data: ${response.data}\x1B[0m',
+      ); // TODO: eliminar después de debug
       final user = UserMapper.userJsonToEntity(response.data);
       return user;
+    } on HttpAdapterException catch (e) {
+      if (e.statusCode == 401) {
+        throw WrongCredentials();
+      }
+      rethrow;
     } catch (e) {
-      throw UnimplementedError();
+      throw Exception('Error inesperado: $e');
     }
   }
 
