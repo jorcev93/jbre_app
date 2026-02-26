@@ -9,9 +9,29 @@ class AuthDataSourceImpl extends AuthDataSource {
     : httpAdapter = httpAdapter ?? DioHttpAdapter(baseUrl: Environment.apiUrl);
 
   @override
-  Future<User> checkAuthStatus(String token) {
-    // TODO: implement checkAuthStatus
-    throw UnimplementedError();
+  Future<User> checkAuthStatus(String token) async {
+    try {
+      final response = await httpAdapter.get(
+        '/auth/check-status',
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      print('\x1B[32mCHECK-STATUS RESPONSE: ${response.data}\x1B[0m');
+
+      final user = UserMapper.userJsonToEntity(response.data, token: token);
+      return user;
+    } on HttpAdapterException catch (e) {
+      print(
+        '\x1B[31mHTTP ERROR: ${e.response?.statusCode} - ${e.response?.data}\x1B[0m',
+      );
+      if (e.response?.statusCode == 401) {
+        throw CustomError('Token incorrecto');
+      }
+      throw Exception();
+    } catch (e) {
+      print('\x1B[31mGENERAL ERROR: $e\x1B[0m');
+      throw Exception();
+    }
   }
 
   @override
