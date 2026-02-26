@@ -2,9 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jbre_app/features/auth/domain/domain.dart';
 import 'package:jbre_app/features/auth/infrastructure/infraestructure.dart';
 
+import '../../../shared/infrastructure/infraestructure.dart';
+
 //! Provider para el repositorio de autenticación
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl();
+});
+
+final keyValueStorageProvider = Provider<KeyValueStorageService>((ref) {
+  return KeyValueStorageServiceImpl();
 });
 
 final authProvider = NotifierProvider<AuthNotifier, AuthState>(
@@ -13,10 +19,12 @@ final authProvider = NotifierProvider<AuthNotifier, AuthState>(
 
 class AuthNotifier extends Notifier<AuthState> {
   late final AuthRepository authRepository;
+  late final KeyValueStorageService keyValueStorageService;
 
   @override
   AuthState build() {
     authRepository = ref.read(authRepositoryProvider);
+    keyValueStorageService = ref.read(keyValueStorageProvider);
     return AuthState();
   }
 
@@ -39,13 +47,13 @@ class AuthNotifier extends Notifier<AuthState> {
   ) async {}
   Future<void> checkAuthStatus(String token) async {}
 
-  void _setLoggedUser(User user) {
-    //TODO: guardar token fisicamente
+  Future<void> _setLoggedUser(User user) async {
+    await keyValueStorageService.setKeyValue('token', user.token);
     state = state.copyWith(user: user, authStatus: AuthStatus.authenticated);
   }
 
   Future<void> logout([String? errorMessage]) async {
-    // TODO: limpiar token fisicamente
+    await keyValueStorageService.removeKey('token');
     state = state.copyWith(
       user: null,
       authStatus: AuthStatus.notAuthenticated,
