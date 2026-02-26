@@ -110,9 +110,9 @@ class _LoginForm extends ConsumerWidget {
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: () {
-                ref.read(loginFormProvider.notifier).onFormSubmitted();
-              },
+              onPressed: loginForm.isPosting
+                  ? null
+                  : ref.read(loginFormProvider.notifier).onFormSubmitted,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF114321),
                 foregroundColor: Colors.white,

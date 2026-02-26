@@ -25,6 +25,10 @@ class AuthNotifier extends Notifier<AuthState> {
   AuthState build() {
     authRepository = ref.read(authRepositoryProvider);
     keyValueStorageService = ref.read(keyValueStorageProvider);
+
+    // Verificar estado de autenticación después de crear el notifier
+    checkAuthStatus();
+
     return AuthState();
   }
 
@@ -45,7 +49,21 @@ class AuthNotifier extends Notifier<AuthState> {
     String password,
     String fullName,
   ) async {}
-  Future<void> checkAuthStatus(String token) async {}
+
+  void checkAuthStatus() async {
+    print('\x1B[32m=== checkAuthStatus CALLED ===\x1B[0m');
+    final token = await keyValueStorageService.getValue<String>('token');
+    print('\x1B[32mTOKEN: $token\x1B[0m');
+    if (token == null) return logout();
+
+    try {
+      final user = await authRepository.checkAuthStatus(token);
+      _setLoggedUser(user);
+    } catch (e) {
+      print('\x1B[31mcheckAuthStatus ERROR: $e\x1B[0m');
+      logout();
+    }
+  }
 
   Future<void> _setLoggedUser(User user) async {
     await keyValueStorageService.setKeyValue('token', user.token);
