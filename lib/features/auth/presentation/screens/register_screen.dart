@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jbre_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:jbre_app/features/auth/presentation/providers/register_form_provider.dart';
 import 'package:jbre_app/features/shared/widgets/custom_text_form_field.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -48,10 +51,24 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-class _RegisterForm extends StatelessWidget {
+class _RegisterForm extends ConsumerWidget {
+  const _RegisterForm();
+
+  void showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final registerForm = ref.watch(registerFormProvider);
     final size = MediaQuery.of(context).size;
+
+    ref.listen(authProvider, (previous, next) {
+      if (next.errorMessage.isEmpty) return;
+      showSnackbar(context, next.errorMessage);
+    });
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -92,37 +109,72 @@ class _RegisterForm extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Campo Nombre completo
-          const CustomTextFormField(
+          CustomTextFormField(
             hint: 'Nombre',
             keyboardType: TextInputType.name,
+            onChanged: ref.read(registerFormProvider.notifier).onNombreChanged,
+            errorMessage: registerForm.isFormPosted
+                ? registerForm.nombre.errorMessage
+                : null,
           ),
 
           const SizedBox(height: 12),
 
-          const CustomTextFormField(
+          CustomTextFormField(
             hint: 'Apellido',
             keyboardType: TextInputType.name,
+            onChanged: ref
+                .read(registerFormProvider.notifier)
+                .onApellidoChanged,
+            errorMessage: registerForm.isFormPosted
+                ? registerForm.apellido.errorMessage
+                : null,
           ),
 
           const SizedBox(height: 12),
 
           // Campo Correo
-          const CustomTextFormField(
+          CustomTextFormField(
             hint: 'Correo',
             keyboardType: TextInputType.emailAddress,
+            onChanged: ref.read(registerFormProvider.notifier).onEmailChanged,
+            errorMessage: registerForm.isFormPosted
+                ? registerForm.email.errorMessage
+                : null,
           ),
 
           const SizedBox(height: 12),
 
           // Campo Contraseña
-          const CustomTextFormField(hint: 'Contraseña', obscureText: true),
+          CustomTextFormField(
+            hint: 'Contraseña',
+            obscureText: true,
+            onChanged: ref
+                .read(registerFormProvider.notifier)
+                .onPasswordChanged,
+            errorMessage: registerForm.isFormPosted
+                ? registerForm.password.errorMessage
+                : null,
+          ),
 
           const SizedBox(height: 12),
 
           // Campo Confirmar contraseña
-          const CustomTextFormField(
+          CustomTextFormField(
             hint: 'Confirmar contraseña',
             obscureText: true,
+            onChanged: ref
+                .read(registerFormProvider.notifier)
+                .onConfirmPasswordChanged,
+            onFieldSubmitted: (_) =>
+                ref.read(registerFormProvider.notifier).onFormSubmitted(),
+            errorMessage: registerForm.isFormPosted
+                ? (registerForm.confirmPassword.errorMessage ??
+                      (registerForm.password.value !=
+                              registerForm.confirmPassword.value
+                          ? 'Las contraseñas no coinciden'
+                          : null))
+                : null,
           ),
 
           const SizedBox(height: 24),
@@ -132,22 +184,37 @@ class _RegisterForm extends StatelessWidget {
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: registerForm.isPosting
+                  ? null
+                  : ref.read(registerFormProvider.notifier).onFormSubmitted,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF114321),
                 foregroundColor: Colors.white,
+                disabledBackgroundColor: const Color(
+                  0xFF114321,
+                ).withOpacity(0.7),
+                disabledForegroundColor: Colors.white70,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                'Registrarse',
-                style: GoogleFonts.montserratAlternates(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: registerForm.isPosting
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white70,
+                      ),
+                    )
+                  : Text(
+                      'Registrarse',
+                      style: GoogleFonts.montserratAlternates(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
 
