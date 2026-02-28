@@ -30,7 +30,7 @@ class SideMenuState extends ConsumerState<SideMenu> {
 
         // final menuItem = appMenuItems[value];
         // context.push( menuItem.link );
-        widget.scaffoldKey.currentState?.closeDrawer();
+        widget.scaffoldKey.currentState?.closeEndDrawer();
       },
       children: [
         Padding(
@@ -40,7 +40,10 @@ class SideMenuState extends ConsumerState<SideMenu> {
 
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 16, 10),
-          child: Text('Tony Stark', style: textStyles.titleSmall),
+          child: Text(
+            ref.watch(authProvider).user?.fullName ?? 'Usuario',
+            style: textStyles.titleSmall,
+          ),
         ),
 
         const NavigationDrawerDestination(
