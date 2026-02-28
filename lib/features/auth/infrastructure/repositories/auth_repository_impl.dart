@@ -18,7 +18,12 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<User> register(String email, String password, String fullName) {
-    return dataSource.register(email, password, fullName);
+  Future<User> register(
+    String email,
+    String password,
+    String nombre,
+    String apellido,
+  ) {
+    return dataSource.register(email, password, nombre, apellido);
   }
 }

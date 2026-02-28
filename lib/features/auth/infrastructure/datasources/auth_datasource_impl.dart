@@ -56,8 +56,34 @@ class AuthDataSourceImpl extends AuthDataSource {
   }
 
   @override
-  Future<User> register(String email, String password, String fullName) {
-    // TODO: implement register
-    throw UnimplementedError();
+  Future<User> register(
+    String email,
+    String password,
+    String nombre,
+    String apellido,
+  ) async {
+    try {
+      final response = await httpAdapter.post(
+        '/auth/register',
+        data: {
+          'email': email,
+          'password': password,
+          'nombre': nombre,
+          'apellido': apellido,
+        },
+      );
+
+      final token = response.data['accessToken'];
+      if (token == null) throw Exception('No token received');
+
+      return await checkAuthStatus(token);
+    } on HttpAdapterException catch (e) {
+      if (e.response != null) {
+        throw CustomError(e.response?.data?['message'] ?? 'Error al registrar');
+      }
+      throw CustomError('Revisar conexión a internet');
+    } catch (e) {
+      throw Exception();
+    }
   }
 }

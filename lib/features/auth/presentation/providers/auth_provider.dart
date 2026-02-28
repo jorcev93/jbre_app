@@ -51,8 +51,26 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> registerUser(
     String email,
     String password,
-    String fullName,
-  ) async {}
+    String nombre,
+    String apellido,
+  ) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    state = state.copyWith(errorMessage: '');
+
+    try {
+      final user = await authRepository.register(
+        email,
+        password,
+        nombre,
+        apellido,
+      );
+      _setLoggedUser(user);
+    } on CustomError catch (e) {
+      logout(e.message);
+    } catch (e) {
+      logout('Error no controlado: ${e.runtimeType} - $e');
+    }
+  }
 
   void checkAuthStatus() async {
     print('\x1B[32m=== checkAuthStatus CALLED ===\x1B[0m');
