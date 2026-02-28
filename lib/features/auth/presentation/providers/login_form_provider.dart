@@ -77,9 +77,14 @@ class LoginFormNotifier extends Notifier<LoginFormState> {
     );
   }
 
-  Future<void> onFormSubmitted() async {  
+  Future<void> onFormSubmitted() async {
     _touchEveryField();
-    if (!state.isValid) return;
+    if (!state.isValid) {
+      state = state.copyWith(
+        isPosting: false,
+      ); // Apagar el loading si no es válido
+      return;
+    }
     state = state.copyWith(isPosting: true);
     await loginUserCallback(state.email.value, state.password.value);
     state = state.copyWith(isPosting: false);

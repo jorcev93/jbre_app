@@ -14,7 +14,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-
+/jbre-back/
 # IntelliJ related
 *.iml
 *.ipr

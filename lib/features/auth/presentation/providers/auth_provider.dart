@@ -34,6 +34,10 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> loginUser(String email, String password) async {
     await Future.delayed(const Duration(milliseconds: 500));
+
+    // Limpiamos el error antes de empezar el login
+    state = state.copyWith(errorMessage: '');
+
     try {
       final user = await authRepository.login(email, password);
       _setLoggedUser(user);
@@ -67,7 +71,12 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> _setLoggedUser(User user) async {
     await keyValueStorageService.setKeyValue('token', user.token);
-    state = state.copyWith(user: user, authStatus: AuthStatus.authenticated);
+    state = state.copyWith(
+      user: user,
+      authStatus: AuthStatus.authenticated,
+      errorMessage:
+          '', // Limpiamos cualquier error previo al autenticarnos exitosamente
+    );
   }
 
   Future<void> logout([String? errorMessage]) async {
