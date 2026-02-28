@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jbre_app/features/shared/widgets/custom_text_form_field.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -53,15 +54,15 @@ class _RegisterForm extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 36),
+      padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Column(
         children: [
           SizedBox(height: size.height * 0.05),
 
           // Logo
           SizedBox(
-            width: 140,
-            height: 140,
+            width: 80,
+            height: 80,
             child: Image.asset(
               'assets/images/logo_jbre.png',
               fit: BoxFit.contain,
@@ -75,7 +76,7 @@ class _RegisterForm extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // Título
           Text(
@@ -88,36 +89,43 @@ class _RegisterForm extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
 
           // Campo Nombre completo
-          const _RegisterTextField(
-            hintText: 'Nombre completo',
+          const CustomTextFormField(
+            hint: 'Nombre',
             keyboardType: TextInputType.name,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+
+          const CustomTextFormField(
+            hint: 'Apellido',
+            keyboardType: TextInputType.name,
+          ),
+
+          const SizedBox(height: 12),
 
           // Campo Correo
-          const _RegisterTextField(
-            hintText: 'Correo',
+          const CustomTextFormField(
+            hint: 'Correo',
             keyboardType: TextInputType.emailAddress,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Campo Contraseña
-          const _RegisterTextField(hintText: 'Contraseña', obscureText: true),
+          const CustomTextFormField(hint: 'Contraseña', obscureText: true),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Campo Confirmar contraseña
-          const _RegisterTextField(
-            hintText: 'Confirmar contraseña',
+          const CustomTextFormField(
+            hint: 'Confirmar contraseña',
             obscureText: true,
           ),
 
-          const SizedBox(height: 28),
+          const SizedBox(height: 24),
 
           // Botón Registrarse
           SizedBox(
@@ -251,78 +259,6 @@ class _RegisterForm extends StatelessWidget {
 
           const SizedBox(height: 120),
         ],
-      ),
-    );
-  }
-}
-
-// Campo de texto estilo registro
-class _RegisterTextField extends StatelessWidget {
-  final String hintText;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final Function(String)? onChanged;
-  final String? errorMessage;
-
-  const _RegisterTextField({
-    required this.hintText,
-    this.obscureText = false,
-    this.keyboardType,
-    this.onChanged,
-    this.errorMessage,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final hasError = errorMessage != null;
-    const errorColor = Color(0xFFFFB74D);
-
-    final normalBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(
-        color: hasError ? errorColor : const Color(0xFF3A7D3E),
-        width: hasError ? 1.8 : 1.2,
-      ),
-    );
-
-    final focusedBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(
-        color: hasError ? errorColor : const Color(0xFF4CAF50),
-        width: 1.8,
-      ),
-    );
-
-    return TextFormField(
-      onChanged: onChanged,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      style: GoogleFonts.montserratAlternates(
-        fontSize: 16,
-        color: Colors.white,
-      ),
-      cursorColor: const Color(0xFF4CAF50),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: GoogleFonts.montserratAlternates(
-          color: Colors.white38,
-          fontSize: 16,
-        ),
-        enabledBorder: normalBorder,
-        focusedBorder: focusedBorder,
-        errorBorder: normalBorder,
-        focusedErrorBorder: focusedBorder,
-        filled: true,
-        fillColor: const Color(0xFF0F250F),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 16,
-        ),
-        errorText: errorMessage,
-        errorStyle: GoogleFonts.montserratAlternates(
-          color: errorColor,
-          fontSize: 12,
-        ),
       ),
     );
   }

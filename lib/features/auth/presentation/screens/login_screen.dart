@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jbre_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:jbre_app/features/auth/presentation/providers/login_form_provider.dart';
+import 'package:jbre_app/features/shared/widgets/custom_text_form_field.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -82,8 +83,8 @@ class _LoginForm extends ConsumerWidget {
           const SizedBox(height: 36),
 
           // ── Campo Usuario ──
-          _LoginTextField(
-            hintText: 'Usuario',
+          CustomTextFormField(
+            hint: 'Usuario',
             keyboardType: TextInputType.emailAddress,
             onChanged: ref.read(loginFormProvider.notifier).onEmailChanged,
             errorMessage: loginForm.isFormPosted
@@ -94,10 +95,12 @@ class _LoginForm extends ConsumerWidget {
           const SizedBox(height: 20),
 
           // ── Campo Contraseña ──
-          _LoginTextField(
-            hintText: 'Contraseña',
+          CustomTextFormField(
+            hint: 'Contraseña',
             obscureText: true,
             onChanged: ref.read(loginFormProvider.notifier).onPasswordChanged,
+            onFieldSubmitted: (_) =>
+                ref.read(loginFormProvider.notifier).onFormSubmitted(),
             errorMessage: loginForm.isFormPosted
                 ? loginForm.password.errorMessage
                 : null,
@@ -116,18 +119,31 @@ class _LoginForm extends ConsumerWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF114321),
                 foregroundColor: Colors.white,
+                disabledBackgroundColor: const Color(
+                  0xFF114321,
+                ).withOpacity(0.7),
+                disabledForegroundColor: Colors.white70,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                'Ingresar',
-                style: GoogleFonts.montserratAlternates(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: loginForm.isPosting
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white70,
+                      ),
+                    )
+                  : Text(
+                      'Ingresar',
+                      style: GoogleFonts.montserratAlternates(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
 
@@ -243,79 +259,6 @@ class _LoginForm extends ConsumerWidget {
 
           const SizedBox(height: 120),
         ],
-      ),
-    );
-  }
-}
-
-// ── Campo de texto estilo login ──
-class _LoginTextField extends StatelessWidget {
-  final String hintText;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final Function(String)? onChanged;
-  final String? errorMessage;
-
-  const _LoginTextField({
-    required this.hintText,
-    this.obscureText = false,
-    this.keyboardType,
-    this.onChanged,
-    this.errorMessage,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final hasError = errorMessage != null;
-
-    const errorColor = Color.fromARGB(255, 163, 157, 157);
-
-    final normalBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(
-        color: hasError ? errorColor : const Color(0xFF3A7D3E),
-        width: hasError ? 1.8 : 1.2,
-      ),
-    );
-
-    final focusedBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: BorderSide(
-        color: hasError ? errorColor : const Color(0xFF4CAF50),
-        width: 1.8,
-      ),
-    );
-
-    return TextFormField(
-      onChanged: onChanged,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      style: GoogleFonts.montserratAlternates(
-        fontSize: 16,
-        color: Colors.white,
-      ),
-      cursorColor: const Color(0xFF4CAF50),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: GoogleFonts.montserratAlternates(
-          color: Colors.white38,
-          fontSize: 16,
-        ),
-        enabledBorder: normalBorder,
-        focusedBorder: focusedBorder,
-        errorBorder: normalBorder,
-        focusedErrorBorder: focusedBorder,
-        filled: true,
-        fillColor: const Color(0xFF0F250F),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 16,
-        ),
-        errorText: errorMessage,
-        errorStyle: GoogleFonts.montserratAlternates(
-          color: errorColor,
-          fontSize: 12,
-        ),
       ),
     );
   }
