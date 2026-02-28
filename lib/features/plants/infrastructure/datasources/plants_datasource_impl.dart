@@ -1,6 +1,5 @@
 import 'package:jbre_app/features/plants/domain/domain.dart';
 import 'package:jbre_app/config/config.dart';
-import 'package:jbre_app/config/http/http.dart';
 import 'package:jbre_app/features/plants/infrastructure/mappers/plant_mapper.dart';
 
 class PlantsDatasourceImpl extends PlantsDatasource {
