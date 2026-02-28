@@ -284,21 +284,88 @@ class _GaleriaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.photo_library_rounded,
-            size: 80,
-            color: Colors.green.withOpacity(0.5),
+    return Column(
+      children: [
+        // Search Bar
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(
+                0xFF142418,
+              ), // Slightly lighter dark green than background
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: TextField(
+              style: GoogleFonts.montserratAlternates(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Buscar...',
+                hintStyle: GoogleFonts.montserratAlternates(
+                  color: Colors.white54,
+                ),
+                prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 15,
+                ),
+              ),
+            ),
           ),
-          const SizedBox(height: 20),
-          Text(
-            'Catálogo de Plantas',
-            style: GoogleFonts.montserratAlternates(
-              fontSize: 24,
-              color: Colors.white,
+        ),
+
+        // Grid View
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
+              childAspectRatio: 0.85, // Slightly taller than wide
+            ),
+            itemCount: 4, // Placeholder count for Planta 1 to 4
+            itemBuilder: (context, index) {
+              return _PlantCard(title: 'Planta ${index + 1}');
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlantCard extends StatelessWidget {
+  final String title;
+
+  const _PlantCard({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF070B08), // Darker inner background
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFF1B3B22), // Green border outline
+          width: 1.5,
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Content inside the card
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Text(
+                title,
+                style: GoogleFonts.montserratAlternates(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ),
         ],
